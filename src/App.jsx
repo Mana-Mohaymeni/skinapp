@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { motion, animate, useMotionValue, useTransform } from 'framer-motion'
 
-const BRAND = 'Cellis' // placeholder name: change to your startup's name
+const BRAND = 'Sincera' // placeholder name: change to your startup's name
 const VIDEO_SRC = '' // e.g. '/skin-cells.mp4' (file in /public) to use your video in the hero instead of the canvas
 
 const T = {
