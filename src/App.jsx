@@ -4,9 +4,11 @@ import { motion, animate, useMotionValue, useTransform } from 'framer-motion'
 const BRAND = 'Sincera' // placeholder name: change to your startup's name
 const VIDEO_SRC = '' // e.g. '/skin-cells.mp4' (file in /public) to use your video in the hero instead of the canvas
 
+const ENDPOINT = '' // paste your Formspree (or similar) URL here to receive partner requests; empty = demo mode
+
 const T = {
   en: {
-    nav: ['Analysis', 'Progress', 'Report', 'FAQ'], cta: 'Early access',
+    nav: ['Analysis', 'Progress', 'Report', 'Partners', 'FAQ'], pcta: 'Partner with us',
     eyebrow: 'AI skin analysis · Machine vision',
     h1: 'Stop guessing. Know what your skin actually needs.',
     sub: 'Regular skin scans, analysed by computer vision, tell you which products suit you and which ingredients to avoid, and track how your skin responds over time.',
@@ -26,12 +28,34 @@ const T = {
     lookL: ['Fragrance-free labels', 'Non-comedogenic formulas', 'Ceramides and humectants'],
     faqTitle: 'Questions',
     faq: [['Is this a medical tool?', "No. It's for beauty and wellness: skincare and makeup, not medication. It doesn't replace a dermatologist."], ['How often should I scan?', 'Regularly, for example weekly, so changes are visible and comparable.'], ['Which products does it cover?', 'Skincare and makeup: cleansers, moisturisers, serums, sunscreen, foundation and more.']],
-    waitTitle: 'Be among the first to try it', waitSub: 'Join the early access list.',
+    waitTitle: 'For individuals: be among the first to try it', waitSub: 'Join the early access list.',
     email: 'Your email', join: 'Join', thanks: "Thank you, we'll be in touch.",
     disc: 'Not a medical device. For skin diagnoses, consult a dermatologist.',
+    p: {
+      eyebrow: 'For businesses',
+      title: 'Build the next generation of skin-aware products with us.',
+      sub: 'We partner with pharmacies, clinics, labs, universities and beauty brands to bring objective, AI-based skin analysis to their customers and research.',
+      perks: [['Recommendations for your customers', 'Integrate scan-based product and ingredient guidance into your store, clinic or app.'], ['Custom databases', 'We can tailor the analysis to your own product catalogue or research data.'], ['Research collaboration', 'Joint studies on how products perform on skin over time.']],
+      steps: ['Organisation', 'Needs', 'Contact'],
+      company: 'Organisation name', type: 'Type of organisation', size: 'Company size', region: 'Main region of operation', markets: 'Main countries or markets (optional)', pick: 'Select…',
+      types: [['pharmacy', 'Pharmacy', 'Farmacia'], ['research_lab', 'Research lab', 'Laboratorio di ricerca'], ['aesthetic_clinic', 'Aesthetician / dermatology clinic', 'Centro estetico / clinica dermatologica'], ['university', 'University', 'Università'], ['beauty_brand', 'Beauty producer / brand', 'Produttore / marchio di bellezza'], ['retailer', 'Retailer / e-commerce', 'Retail / e-commerce'], ['other', 'Other', 'Altro']],
+      sizes: [['1-10', '1–10 employees', '1–10 dipendenti'], ['11-50', '11–50 employees', '11–50 dipendenti'], ['51-250', '51–250 employees', '51–250 dipendenti'], ['251-1000', '251–1,000 employees', '251–1.000 dipendenti'], ['1000+', '1,000+ employees', 'Oltre 1.000 dipendenti']],
+      regions: [['italy', 'Italy', 'Italia'], ['europe', 'Europe (outside Italy)', 'Europa (esclusa Italia)'], ['north_america', 'North America', 'Nord America'], ['latam', 'Latin America', 'America Latina'], ['mena', 'Middle East & Africa', 'Medio Oriente e Africa'], ['asia', 'Asia-Pacific', 'Asia-Pacifico'], ['global', 'Global', 'Globale']],
+      intLabel: 'What are you interested in?',
+      ints: [['recommendations', 'Product recommendations for customers', 'Raccomandazioni di prodotto per i clienti'], ['analysis', 'Skin analysis in our store or clinic', 'Analisi della pelle nel nostro punto vendita o centro'], ['research', 'Research collaboration', 'Collaborazione di ricerca'], ['whitelabel', 'White-label / API integration', 'White-label / integrazione API']],
+      customQ: 'Would you like us to build a custom database or model for you?',
+      customs: [['yes', 'Yes', 'Sì'], ['maybe', "Maybe, let's talk", 'Forse, parliamone'], ['no', 'No, the standard one is fine', 'No, va bene quello standard']],
+      customNote: 'Tell us briefly about your data or product catalogue (optional)',
+      timeline: 'Expected start',
+      times: [['now', 'Immediately', 'Subito'], ['3m', 'Within 3 months', 'Entro 3 mesi'], ['6m', 'Within 6 months', 'Entro 6 mesi'], ['explore', 'Just exploring', 'Sto solo esplorando']],
+      name: 'Full name', role: 'Role', email: 'Work email', phone: 'Phone (optional)', message: 'Anything else we should know? (optional)',
+      consent: 'I agree to be contacted about a partnership.',
+      next: 'Continue', back: 'Back', send: 'Send request', sending: 'Sending…',
+      thanks: "Thank you. We've received your request and will be in touch.", error: 'Something went wrong. Please try again.',
+    },
   },
   it: {
-    nav: ['Analisi', 'Progressi', 'Report', 'FAQ'], cta: 'Accesso anticipato',
+    nav: ['Analisi', 'Progressi', 'Report', 'Partner', 'FAQ'], pcta: 'Diventa partner',
     eyebrow: 'Analisi della pelle con AI · Visione artificiale',
     h1: 'Smetti di tirare a indovinare. Scopri di cosa ha davvero bisogno la tua pelle.',
     sub: 'Scansioni regolari della pelle, analizzate con la visione artificiale, ti dicono quali prodotti ti convengono e quali ingredienti evitare, e monitorano come reagisce la tua pelle nel tempo.',
@@ -51,9 +75,25 @@ const T = {
     lookL: ['Etichette senza profumo', 'Formule non comedogeniche', 'Ceramidi e umettanti'],
     faqTitle: 'Domande',
     faq: [['È uno strumento medico?', 'No. È pensato per bellezza e benessere: skincare e makeup, non farmaci. Non sostituisce il dermatologo.'], ['Ogni quanto devo scansionare?', 'Regolarmente, per esempio ogni settimana, così i cambiamenti sono visibili e confrontabili.'], ['Quali prodotti copre?', 'Skincare e makeup: detergenti, idratanti, sieri, solari, fondotinta e altro.']],
-    waitTitle: 'Sii tra i primi a provarlo', waitSub: "Iscriviti alla lista d'accesso anticipato.",
+    waitTitle: 'Per i privati: sii tra i primi a provarlo', waitSub: "Iscriviti alla lista d'accesso anticipato.",
     email: 'La tua email', join: 'Iscriviti', thanks: 'Grazie, ti contatteremo.',
     disc: 'Non è un dispositivo medico. Per diagnosi cutanee consulta un dermatologo.',
+    p: {
+      eyebrow: 'Per le aziende',
+      title: 'Costruisci con noi la prossima generazione di prodotti attenti alla pelle.',
+      sub: 'Collaboriamo con farmacie, centri, laboratori, università e marchi di bellezza per portare ai loro clienti e alla loro ricerca un’analisi della pelle oggettiva, basata su AI.',
+      perks: [['Raccomandazioni per i tuoi clienti', 'Integra nel tuo negozio, centro o app consigli su prodotti e ingredienti basati sulla scansione.'], ['Database personalizzati', 'Possiamo adattare l’analisi al tuo catalogo prodotti o ai tuoi dati di ricerca.'], ['Collaborazione di ricerca', 'Studi congiunti su come i prodotti funzionano sulla pelle nel tempo.']],
+      steps: ['Organizzazione', 'Esigenze', 'Contatto'],
+      company: 'Nome dell’organizzazione', type: 'Tipo di organizzazione', size: 'Dimensione aziendale', region: 'Area principale di attività', markets: 'Paesi o mercati principali (facoltativo)', pick: 'Seleziona…',
+      intLabel: 'Cosa ti interessa?',
+      customQ: 'Vorresti che creassimo un database o un modello personalizzato per te?',
+      customNote: 'Raccontaci brevemente i tuoi dati o il tuo catalogo prodotti (facoltativo)',
+      timeline: 'Avvio previsto',
+      name: 'Nome e cognome', role: 'Ruolo', email: 'Email di lavoro', phone: 'Telefono (facoltativo)', message: 'Altro che dovremmo sapere? (facoltativo)',
+      consent: 'Acconsento a essere contattato per una partnership.',
+      next: 'Continua', back: 'Indietro', send: 'Invia richiesta', sending: 'Invio…',
+      thanks: 'Grazie. Abbiamo ricevuto la tua richiesta e ti contatteremo.', error: 'Qualcosa è andato storto. Riprova.',
+    },
   },
 }
 
@@ -158,6 +198,114 @@ const SERIES = [
 ]
 const toPath = (pts) => pts.map((v, i) => `${i ? 'L' : 'M'}${40 + i * 74} ${200 - v * 1.8}`).join(' ')
 
+const inp = 'w-full rounded-xl border border-cocoa/15 bg-[#fff8e8] px-4 py-3 text-sm outline-none focus:border-peach'
+const Field = ({ label, children }) => (
+  <label className="block"><span className="mb-1.5 block text-xs text-cocoa/65">{label}</span>{children}</label>
+)
+const Chip = ({ on, onClick, children }) => (
+  <button type="button" aria-pressed={on} onClick={onClick}
+    className={`rounded-full border px-4 py-2 text-sm transition ${on ? 'border-cocoa bg-cocoa text-cream' : 'border-cocoa/20 text-cocoa/75 hover:border-cocoa/50'}`}>{children}</button>
+)
+
+function PartnerForm({ t, lang }) {
+  const p = t.p, li = lang === 'en' ? 1 : 2
+  const [step, setStep] = useState(0)
+  const [status, setStatus] = useState('idle')
+  const [d, setD] = useState({ company: '', type: '', size: '', region: '', markets: '', interests: [], custom: '', customNote: '', timeline: '', name: '', role: '', email: '', phone: '', message: '', consent: false })
+  const set = (k) => (e) => setD((s) => ({ ...s, [k]: e.target.value }))
+  const put = (k, v) => setD((s) => ({ ...s, [k]: v }))
+  const toggle = (k) => setD((s) => ({ ...s, interests: s.interests.includes(k) ? s.interests.filter((x) => x !== k) : [...s.interests, k] }))
+  const valid = [d.company && d.type && d.size && d.region, d.custom && d.timeline, d.name && /\S+@\S+\.\S+/.test(d.email) && d.consent][step]
+
+  const submit = async () => {
+    setStatus('sending')
+    try {
+      if (ENDPOINT) {
+        const r = await fetch(ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify({ ...d, language: lang, submitted_at: new Date().toISOString() }) })
+        if (!r.ok) throw new Error('bad response')
+      } else {
+        console.log('Partner request (demo mode):', d)
+        await new Promise((r) => setTimeout(r, 700))
+      }
+      setStatus('done')
+    } catch { setStatus('error') }
+  }
+
+  const select = (k, list) => (
+    <select className={inp} value={d[k]} onChange={set(k)}>
+      <option value="">{p.pick}</option>
+      {list.map((o) => <option key={o[0]} value={o[0]}>{o[li]}</option>)}
+    </select>
+  )
+
+  if (status === 'done') return (
+    <div className="rounded-2xl border border-cocoa/10 bg-cream p-10 text-center">
+      <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-peach/30 text-lg">✓</div>
+      <p className="text-cocoa/80">{p.thanks}</p>
+    </div>
+  )
+
+  return (
+    <div className="rounded-2xl border border-cocoa/10 bg-cream p-6 shadow-[0_20px_50px_-30px_rgba(59,42,38,0.35)] md:p-8">
+      <div className="mb-7 flex gap-2">
+        {p.steps.map((s, i) => (
+          <div key={s} className="flex-1">
+            <div className={`h-1 rounded-full ${i <= step ? 'bg-peach' : 'bg-cocoa/10'}`} />
+            <div className={`mt-2 text-xs ${i === step ? 'text-cocoa' : 'text-cocoa/45'}`}>{s}</div>
+          </div>
+        ))}
+      </div>
+
+      {step === 0 && (
+        <div className="grid gap-4 sm:grid-cols-2">
+          <div className="sm:col-span-2"><Field label={p.company}><input className={inp} value={d.company} onChange={set('company')} /></Field></div>
+          <Field label={p.type}>{select('type', p.types)}</Field>
+          <Field label={p.size}>{select('size', p.sizes)}</Field>
+          <Field label={p.region}>{select('region', p.regions)}</Field>
+          <Field label={p.markets}><input className={inp} value={d.markets} onChange={set('markets')} /></Field>
+        </div>
+      )}
+
+      {step === 1 && (
+        <div className="space-y-6">
+          <div>
+            <div className="mb-2 text-xs text-cocoa/65">{p.intLabel}</div>
+            <div className="flex flex-wrap gap-2">{p.ints.map((o) => <Chip key={o[0]} on={d.interests.includes(o[0])} onClick={() => toggle(o[0])}>{o[li]}</Chip>)}</div>
+          </div>
+          <div>
+            <div className="mb-2 text-xs text-cocoa/65">{p.customQ}</div>
+            <div className="flex flex-wrap gap-2">{p.customs.map((o) => <Chip key={o[0]} on={d.custom === o[0]} onClick={() => put('custom', o[0])}>{o[li]}</Chip>)}</div>
+          </div>
+          {d.custom === 'yes' && <Field label={p.customNote}><textarea rows={3} className={inp} value={d.customNote} onChange={set('customNote')} /></Field>}
+          <Field label={p.timeline}>{select('timeline', p.times)}</Field>
+        </div>
+      )}
+
+      {step === 2 && (
+        <div className="grid gap-4 sm:grid-cols-2">
+          <Field label={p.name}><input className={inp} value={d.name} onChange={set('name')} /></Field>
+          <Field label={p.role}><input className={inp} value={d.role} onChange={set('role')} /></Field>
+          <Field label={p.email}><input type="email" className={inp} value={d.email} onChange={set('email')} /></Field>
+          <Field label={p.phone}><input type="tel" className={inp} value={d.phone} onChange={set('phone')} /></Field>
+          <div className="sm:col-span-2"><Field label={p.message}><textarea rows={3} className={inp} value={d.message} onChange={set('message')} /></Field></div>
+          <label className="flex items-start gap-3 text-sm text-cocoa/75 sm:col-span-2">
+            <input type="checkbox" checked={d.consent} onChange={(e) => put('consent', e.target.checked)} className="mt-0.5 accent-[#f8a39d]" />{p.consent}
+          </label>
+        </div>
+      )}
+
+      {status === 'error' && <p className="mt-4 text-sm text-[#b5594a]">{p.error}</p>}
+
+      <div className="mt-8 flex items-center justify-between">
+        {step > 0 ? <button type="button" onClick={() => setStep(step - 1)} className="text-sm text-cocoa/65 hover:text-cocoa">← {p.back}</button> : <span />}
+        {step < 2
+          ? <button type="button" disabled={!valid} onClick={() => setStep(step + 1)} className="rounded-full bg-cocoa px-6 py-3 text-sm font-medium text-cream disabled:opacity-35">{p.next}</button>
+          : <button type="button" disabled={!valid || status === 'sending'} onClick={submit} className="rounded-full bg-peach px-6 py-3 text-sm font-medium text-cocoa disabled:opacity-40">{status === 'sending' ? p.sending : p.send}</button>}
+      </div>
+    </div>
+  )
+}
+
 export default function App() {
   const [lang, setLang] = useState('en')
   const hy = useMotionValue(0.08)
@@ -182,7 +330,7 @@ export default function App() {
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
           <a href="#top" className="flex items-center gap-2.5 text-lg" style={{ fontFamily: 'Fraunces, Georgia, serif' }}><Logo />{BRAND}</a>
           <nav className="hidden gap-8 text-sm text-cocoa/70 md:flex">
-            {['analysis', 'progress', 'report', 'faq'].map((id, i) => <a key={id} href={`#${id}`} className="hover:text-cocoa">{t.nav[i]}</a>)}
+            {['analysis', 'progress', 'report', 'partners', 'faq'].map((id, i) => <a key={id} href={`#${id}`} className="hover:text-cocoa">{t.nav[i]}</a>)}
           </nav>
           <div className="flex items-center gap-3">
             <div className="flex overflow-hidden rounded-full border border-cocoa/20 text-xs">
@@ -190,7 +338,7 @@ export default function App() {
                 <button key={l} onClick={() => setLang(l)} className={`px-3 py-1.5 uppercase ${lang === l ? 'bg-cocoa text-cream' : 'text-cocoa/70'}`}>{l}</button>
               ))}
             </div>
-            <a href="#access" className="hidden rounded-full bg-peach px-4 py-2 text-sm font-medium text-cocoa sm:block">{t.cta}</a>
+            <a href="#partners" className="hidden rounded-full bg-peach px-4 py-2 text-sm font-medium text-cocoa sm:block">{t.pcta}</a>
           </div>
         </div>
       </header>
@@ -202,7 +350,7 @@ export default function App() {
             className="text-4xl leading-[1.1] md:text-5xl" style={{ fontFamily: 'Fraunces, Georgia, serif' }}>{t.h1}</motion.h1>
           <p className="mt-6 max-w-lg text-base leading-relaxed text-cocoa/75">{t.sub}</p>
           <div className="mt-9 flex gap-4">
-            <a href="#access" className="rounded-full bg-cocoa px-6 py-3 text-sm font-medium text-cream">{t.cta}</a>
+            <a href="#partners" className="rounded-full bg-cocoa px-6 py-3 text-sm font-medium text-cream">{t.pcta}</a>
             <a href="#how" className="rounded-full border border-cocoa/25 px-6 py-3 text-sm">{t.cta2}</a>
           </div>
         </div>
@@ -300,6 +448,28 @@ export default function App() {
             ))}
           </div>
         </Reveal>
+      </Section>
+
+      <Section id="partners">
+        <div className="grid gap-12 lg:grid-cols-5">
+          <Reveal className="lg:col-span-2">
+            <p className="mb-4 text-xs uppercase tracking-[0.18em] text-cocoa/60">{t.p.eyebrow}</p>
+            <h2 className="text-3xl leading-tight md:text-4xl" style={{ fontFamily: 'Fraunces, Georgia, serif' }}>{t.p.title}</h2>
+            <p className="mt-5 leading-relaxed text-cocoa/70">{t.p.sub}</p>
+            <div className="mt-6 flex flex-wrap gap-2">
+              {t.p.types.slice(0, 6).map((o) => <span key={o[0]} className="rounded-full border border-cocoa/15 px-3 py-1 text-xs text-cocoa/70">{o[lang === 'en' ? 1 : 2]}</span>)}
+            </div>
+            <div className="mt-10 space-y-6">
+              {t.p.perks.map(([h, d]) => (
+                <div key={h} className="flex gap-4">
+                  <div className="mt-2 h-2 w-2 shrink-0 rounded-full bg-peach" />
+                  <div><h3 className="font-medium">{h}</h3><p className="mt-1 text-sm leading-relaxed text-cocoa/70">{d}</p></div>
+                </div>
+              ))}
+            </div>
+          </Reveal>
+          <Reveal className="lg:col-span-3"><PartnerForm t={t} lang={lang} /></Reveal>
+        </div>
       </Section>
 
       <Section id="faq">
