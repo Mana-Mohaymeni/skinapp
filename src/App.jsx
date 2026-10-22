@@ -1,10 +1,19 @@
 import { useEffect, useRef, useState } from 'react'
 import { motion, animate, useMotionValue, useTransform } from 'framer-motion'
 
-const BRAND = 'Sincera' // placeholder name: change to your startup's name
+const BRAND = 'Cellis' // placeholder name: change to your startup's name
 const VIDEO_SRC = '' // e.g. '/skin-cells.mp4' (file in /public) to use your video in the hero instead of the canvas
 
 const ENDPOINT = '' // paste your Formspree (or similar) URL here to receive partner requests; empty = demo mode
+
+const P_LISTS = {
+  types: [['pharmacy', 'Pharmacy', 'Farmacia'], ['research_lab', 'Research lab', 'Laboratorio di ricerca'], ['aesthetic_clinic', 'Aesthetician / dermatology clinic', 'Centro estetico / clinica dermatologica'], ['university', 'University', 'Università'], ['beauty_brand', 'Beauty producer / brand', 'Produttore / marchio di bellezza'], ['retailer', 'Retailer / e-commerce', 'Retail / e-commerce'], ['other', 'Other', 'Altro']],
+  sizes: [['1-10', '1–10 employees', '1–10 dipendenti'], ['11-50', '11–50 employees', '11–50 dipendenti'], ['51-250', '51–250 employees', '51–250 dipendenti'], ['251-1000', '251–1,000 employees', '251–1.000 dipendenti'], ['1000+', '1,000+ employees', 'Oltre 1.000 dipendenti']],
+  regions: [['italy', 'Italy', 'Italia'], ['europe', 'Europe (outside Italy)', 'Europa (esclusa Italia)'], ['north_america', 'North America', 'Nord America'], ['latam', 'Latin America', 'America Latina'], ['mena', 'Middle East & Africa', 'Medio Oriente e Africa'], ['asia', 'Asia-Pacific', 'Asia-Pacifico'], ['global', 'Global', 'Globale']],
+  ints: [['recommendations', 'Product recommendations for customers', 'Raccomandazioni di prodotto per i clienti'], ['analysis', 'Skin analysis in our store or clinic', 'Analisi della pelle nel nostro punto vendita o centro'], ['research', 'Research collaboration', 'Collaborazione di ricerca'], ['whitelabel', 'White-label / API integration', 'White-label / integrazione API']],
+  customs: [['yes', 'Yes', 'Sì'], ['maybe', "Maybe, let's talk", 'Forse, parliamone'], ['no', 'No, the standard one is fine', 'No, va bene quello standard']],
+  times: [['now', 'Immediately', 'Subito'], ['3m', 'Within 3 months', 'Entro 3 mesi'], ['6m', 'Within 6 months', 'Entro 6 mesi'], ['explore', 'Just exploring', 'Sto solo esplorando']],
+}
 
 const T = {
   en: {
@@ -18,10 +27,15 @@ const T = {
     howTitle: 'How it works',
     steps: [['Scan', 'A quick photo scan captures your skin in consistent conditions.'], ['Analyse', 'Computer vision measures hydration, texture, redness and blemishes.'], ['Recommend', 'Get ingredients to avoid, labels to look for and products that fit.'], ['Track', 'Rescan regularly to see how your skin responds to each product.']],
     anTitle: 'What the AI reads in your skin',
-    an: [['Skin type', 'Oily, dry, combination or sensitive: measured, not guessed.'], ['Hydration', 'Surface moisture levels and how they change over time.'], ['Texture', 'Roughness, pores and surface smoothness.'], ['Redness', 'Areas of irritation mapped across the face.'], ['Blemishes', 'Detection and mapping of spots and congestion.'], ['Tone & undertone', 'The basis for makeup that suits you.']],
+    anSub: 'Our model detects five skin signs and measures the characteristics around them.',
+    detLabel: 'Detected signs', moreLabel: 'Also measured',
+    det: [['Wrinkles', 'Fine lines and deeper wrinkles, mapped across the face.'], ['Inflammatory acne', 'Red, inflamed blemishes such as papules and pustules.'], ['Comedonal acne', 'Blackheads and whiteheads: clogged pores without inflammation.'], ['Red spots', 'Red marks and areas of irritation on the skin.'], ['Brown spots', 'Pigmentation: dark spots and uneven patches.']],
+    more: ['Skin colour and tone', 'Undertone', 'Texture', 'Hydration', 'Skin type'],
+    incEyebrow: 'Our values', incTitle: 'Built for every skin tone.',
+    incText: 'Inclusivity is one of our core values. Skin analysis and product advice should work for everyone, so we are committed to building and testing our models across the full range of skin tones, and to matching makeup and skincare to your own tone and undertone.',
     prTitle: 'See what each product really does',
     prSub: 'Every scan becomes a data point. Over weeks, you see whether a product improves your skin or not.',
-    series: ['Hydration', 'Redness', 'Texture'], note: 'Illustrative data',
+    series: ['Inflammatory acne', 'Red spots', 'Brown spots'], note: 'Illustrative data · fewer signs is better',
     repTitle: 'A report that tells you what to buy, and what to skip',
     avoid: 'Avoid', look: 'Look for', sample: 'Sample report',
     avoidL: ['Denatured alcohol', 'Synthetic fragrance', 'Harsh physical scrubs'],
@@ -32,22 +46,17 @@ const T = {
     email: 'Your email', join: 'Join', thanks: "Thank you, we'll be in touch.",
     disc: 'Not a medical device. For skin diagnoses, consult a dermatologist.',
     p: {
+      ...P_LISTS,
       eyebrow: 'For businesses',
       title: 'Build the next generation of skin-aware products with us.',
       sub: 'We partner with pharmacies, clinics, labs, universities and beauty brands to bring objective, AI-based skin analysis to their customers and research.',
       perks: [['Recommendations for your customers', 'Integrate scan-based product and ingredient guidance into your store, clinic or app.'], ['Custom databases', 'We can tailor the analysis to your own product catalogue or research data.'], ['Research collaboration', 'Joint studies on how products perform on skin over time.']],
       steps: ['Organisation', 'Needs', 'Contact'],
       company: 'Organisation name', type: 'Type of organisation', size: 'Company size', region: 'Main region of operation', markets: 'Main countries or markets (optional)', pick: 'Select…',
-      types: [['pharmacy', 'Pharmacy', 'Farmacia'], ['research_lab', 'Research lab', 'Laboratorio di ricerca'], ['aesthetic_clinic', 'Aesthetician / dermatology clinic', 'Centro estetico / clinica dermatologica'], ['university', 'University', 'Università'], ['beauty_brand', 'Beauty producer / brand', 'Produttore / marchio di bellezza'], ['retailer', 'Retailer / e-commerce', 'Retail / e-commerce'], ['other', 'Other', 'Altro']],
-      sizes: [['1-10', '1–10 employees', '1–10 dipendenti'], ['11-50', '11–50 employees', '11–50 dipendenti'], ['51-250', '51–250 employees', '51–250 dipendenti'], ['251-1000', '251–1,000 employees', '251–1.000 dipendenti'], ['1000+', '1,000+ employees', 'Oltre 1.000 dipendenti']],
-      regions: [['italy', 'Italy', 'Italia'], ['europe', 'Europe (outside Italy)', 'Europa (esclusa Italia)'], ['north_america', 'North America', 'Nord America'], ['latam', 'Latin America', 'America Latina'], ['mena', 'Middle East & Africa', 'Medio Oriente e Africa'], ['asia', 'Asia-Pacific', 'Asia-Pacifico'], ['global', 'Global', 'Globale']],
       intLabel: 'What are you interested in?',
-      ints: [['recommendations', 'Product recommendations for customers', 'Raccomandazioni di prodotto per i clienti'], ['analysis', 'Skin analysis in our store or clinic', 'Analisi della pelle nel nostro punto vendita o centro'], ['research', 'Research collaboration', 'Collaborazione di ricerca'], ['whitelabel', 'White-label / API integration', 'White-label / integrazione API']],
       customQ: 'Would you like us to build a custom database or model for you?',
-      customs: [['yes', 'Yes', 'Sì'], ['maybe', "Maybe, let's talk", 'Forse, parliamone'], ['no', 'No, the standard one is fine', 'No, va bene quello standard']],
       customNote: 'Tell us briefly about your data or product catalogue (optional)',
       timeline: 'Expected start',
-      times: [['now', 'Immediately', 'Subito'], ['3m', 'Within 3 months', 'Entro 3 mesi'], ['6m', 'Within 6 months', 'Entro 6 mesi'], ['explore', 'Just exploring', 'Sto solo esplorando']],
       name: 'Full name', role: 'Role', email: 'Work email', phone: 'Phone (optional)', message: 'Anything else we should know? (optional)',
       consent: 'I agree to be contacted about a partnership.',
       next: 'Continue', back: 'Back', send: 'Send request', sending: 'Sending…',
@@ -65,10 +74,15 @@ const T = {
     howTitle: 'Come funziona',
     steps: [['Scansiona', 'Una rapida scansione fotografica cattura la tua pelle in condizioni costanti.'], ['Analizza', 'La visione artificiale misura idratazione, texture, rossore e imperfezioni.'], ['Consiglia', 'Ricevi gli ingredienti da evitare, le etichette da cercare e i prodotti adatti.'], ['Monitora', 'Ripeti la scansione per vedere come la pelle reagisce a ogni prodotto.']],
     anTitle: "Cosa legge l'AI nella tua pelle",
-    an: [['Tipo di pelle', 'Grassa, secca, mista o sensibile: misurato, non tirato a indovinare.'], ['Idratazione', 'Livelli di umidità superficiale e come cambiano nel tempo.'], ['Texture', 'Ruvidità, pori e levigatezza della superficie.'], ['Rossore', 'Le zone di irritazione mappate sul viso.'], ['Imperfezioni', 'Rilevamento e mappatura di macchie e congestione.'], ['Tono e sottotono', 'La base per un makeup adatto a te.']],
+    anSub: 'Il nostro modello rileva cinque segni della pelle e misura le caratteristiche che li circondano.',
+    detLabel: 'Segni rilevati', moreLabel: 'Misurato anche',
+    det: [['Rughe', 'Linee sottili e rughe profonde, mappate sul viso.'], ['Acne infiammatoria', 'Imperfezioni rosse e infiammate, come papule e pustole.'], ['Acne comedonica', 'Punti neri e punti bianchi: pori ostruiti senza infiammazione.'], ['Macchie rosse', 'Segni rossi e zone di irritazione sulla pelle.'], ['Macchie brune', 'Pigmentazione: macchie scure e discromie.']],
+    more: ['Colore e tono della pelle', 'Sottotono', 'Texture', 'Idratazione', 'Tipo di pelle'],
+    incEyebrow: 'I nostri valori', incTitle: 'Pensato per ogni tonalità di pelle.',
+    incText: 'L’inclusività è uno dei nostri valori fondamentali. L’analisi della pelle e i consigli sui prodotti devono funzionare per tutti: ci impegniamo a sviluppare e testare i nostri modelli su tutta la gamma di tonalità e ad abbinare makeup e skincare al tuo tono e sottotono.',
     prTitle: 'Guarda cosa fa davvero ogni prodotto',
     prSub: 'Ogni scansione diventa un dato. Nel giro di settimane vedi se un prodotto migliora la tua pelle oppure no.',
-    series: ['Idratazione', 'Rossore', 'Texture'], note: 'Dati illustrativi',
+    series: ['Acne infiammatoria', 'Macchie rosse', 'Macchie brune'], note: 'Dati illustrativi · meno segni è meglio',
     repTitle: 'Un report che ti dice cosa comprare e cosa evitare',
     avoid: 'Evita', look: 'Cerca', sample: 'Report di esempio',
     avoidL: ['Alcol denaturato', 'Profumo sintetico', 'Scrub fisici aggressivi'],
@@ -79,6 +93,7 @@ const T = {
     email: 'La tua email', join: 'Iscriviti', thanks: 'Grazie, ti contatteremo.',
     disc: 'Non è un dispositivo medico. Per diagnosi cutanee consulta un dermatologo.',
     p: {
+      ...P_LISTS,
       eyebrow: 'Per le aziende',
       title: 'Costruisci con noi la prossima generazione di prodotti attenti alla pelle.',
       sub: 'Collaboriamo con farmacie, centri, laboratori, università e marchi di bellezza per portare ai loro clienti e alla loro ricerca un’analisi della pelle oggettiva, basata su AI.',
@@ -192,10 +207,11 @@ const H2 = ({ children }) => (
 )
 
 const SERIES = [
-  { pts: [30, 38, 47, 58, 67, 76, 83, 88], c: '#f8a39d' },
-  { pts: [72, 66, 58, 48, 40, 33, 28, 24], c: '#3b2a26' },
-  { pts: [40, 44, 52, 58, 66, 72, 77, 82], c: '#c9a56a' },
+  { pts: [62, 56, 48, 40, 34, 28, 24, 20], c: '#f8a39d' },
+  { pts: [70, 64, 57, 49, 42, 36, 31, 27], c: '#3b2a26' },
+  { pts: [48, 47, 45, 43, 41, 39, 38, 36], c: '#c9a56a' },
 ]
+const TONES = ['#f7e0cb', '#efc9a5', '#e0ac82', '#c68a5e', '#a56a43', '#85502f', '#613824', '#3f2316']
 const toPath = (pts) => pts.map((v, i) => `${i ? 'L' : 'M'}${40 + i * 74} ${200 - v * 1.8}`).join(' ')
 
 const inp = 'w-full rounded-xl border border-cocoa/15 bg-[#fff8e8] px-4 py-3 text-sm outline-none focus:border-peach'
@@ -398,14 +414,33 @@ export default function App() {
 
       <Section id="analysis" tint>
         <Reveal><H2>{t.anTitle}</H2></Reveal>
-        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {t.an.map(([h, d], i) => (
-            <Reveal key={h} delay={i * 0.06} className="rounded-2xl border border-cocoa/10 bg-cream p-6">
+        <p className="-mt-6 mb-10 max-w-2xl text-cocoa/70">{t.anSub}</p>
+        <div className="mb-3 text-xs uppercase tracking-[0.16em] text-cocoa/55">{t.detLabel}</div>
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-6">
+          {t.det.map(([h, d], i) => (
+            <Reveal key={h} delay={i * 0.06} className={`rounded-2xl border border-cocoa/10 bg-cream p-6 ${i < 3 ? 'lg:col-span-2' : 'lg:col-span-3'}`}>
               <div className="mb-3 h-2 w-2 rounded-full bg-peach" />
               <h3 className="mb-1.5 font-medium">{h}</h3>
               <p className="text-sm leading-relaxed text-cocoa/70">{d}</p>
             </Reveal>
           ))}
+        </div>
+        <div className="mb-3 mt-10 text-xs uppercase tracking-[0.16em] text-cocoa/55">{t.moreLabel}</div>
+        <div className="flex flex-wrap gap-2">
+          {t.more.map((x) => <span key={x} className="rounded-full border border-cocoa/20 bg-cream px-4 py-2 text-sm">{x}</span>)}
+        </div>
+      </Section>
+
+      <Section id="inclusive">
+        <div className="grid items-center gap-12 md:grid-cols-2">
+          <Reveal>
+            <p className="mb-4 text-xs uppercase tracking-[0.18em] text-cocoa/60">{t.incEyebrow}</p>
+            <h2 className="text-3xl leading-tight md:text-4xl" style={{ fontFamily: 'Fraunces, Georgia, serif' }}>{t.incTitle}</h2>
+            <p className="mt-5 max-w-lg leading-relaxed text-cocoa/70">{t.incText}</p>
+          </Reveal>
+          <Reveal className="grid grid-cols-4 gap-3">
+            {TONES.map((c) => <div key={c} aria-hidden="true" className="aspect-square rounded-2xl border border-cocoa/10" style={{ background: c }} />)}
+          </Reveal>
         </div>
       </Section>
 
